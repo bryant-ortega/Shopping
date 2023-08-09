@@ -24,12 +24,13 @@ const ShoppingLists = ({ db }) => {
 
     const addShoppingList = async (newList) => {
         const newListRef = await addDoc(collection(db, "shoppinglists"), newList);
-    if (newListRef.id) {
-      Alert.alert(`The list "${listName}" has been added.`);
-    }else{
-      Alert.alert("Unable to add. Please try later");
-    }
-    }
+        if (newListRef.id) {
+          setLists([newList, ...lists]);
+          Alert.alert(`The list "${listName}" has been added.`);
+        } else {
+          Alert.alert("Unable to add. Please try later");
+        }
+      }
 
     useEffect(() => {
         fetchShoppingLists();
@@ -38,6 +39,7 @@ const ShoppingLists = ({ db }) => {
     return (
         <View style={styles.container}>
           <FlatList
+            style={styles.listsContainer}
             data={lists}
             renderItem={({ item }) =>
               <View style={styles.listItem}>
