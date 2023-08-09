@@ -5,7 +5,7 @@ import {
     TouchableOpacity
   } from 'react-native';
 
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 const ShoppingLists = ({ db }) => {
     const [lists, setLists] = useState([]);
@@ -21,6 +21,15 @@ const ShoppingLists = ({ db }) => {
         });
         setLists(newLists);
     };
+
+    const addShoppingList = async (newList) => {
+        const newListRef = await addDoc(collection(db, "shoppinglists"), newList);
+    if (newListRef.id) {
+      Alert.alert(`The list "${listName}" has been added.`);
+    }else{
+      Alert.alert("Unable to add. Please try later");
+    }
+    }
 
     useEffect(() => {
         fetchShoppingLists();
@@ -56,11 +65,17 @@ const ShoppingLists = ({ db }) => {
               onChangeText={setItem2}
             />
             <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => { }}
-            >
-              <Text style={styles.addButtonText}>Add</Text>
-            </TouchableOpacity>
+          style={styles.addButton}
+          onPress={() => {
+            const newList = {
+              name: listName,
+              items: [item1, item2]
+            }
+            addShoppingList(newList);
+          }}
+        >
+          <Text style={styles.addButtonText}>Add</Text>
+        </TouchableOpacity>
           </View>
           {Platform.OS === "ios" ? <KeyboardAvoidingView behavior="padding" /> : null}
         </View>
