@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
     StyleSheet, View, FlatList, Text,
     TextInput, KeyboardAvoidingView,
-    TouchableOpacity
+    TouchableOpacity, Alert
   } from 'react-native';
 
 import { collection, getDocs, addDoc } from "firebase/firestore";
