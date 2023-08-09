@@ -24,12 +24,11 @@ const ShoppingLists = ({ db }) => {
 
     useEffect(() => {
         fetchShoppingLists();
-    }, [`${lists}`]);
+    }, [JSON.stringify(lists)]);
 
     return (
         <View style={styles.container}>
           <FlatList
-            style={styles.listsContainer}
             data={lists}
             renderItem={({ item }) =>
               <View style={styles.listItem}>
