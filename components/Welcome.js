@@ -3,6 +3,7 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Welcome = ({ navigation }) => {
     const auth = getAuth();
+    
     const signInUser = () => {
         signInAnonymously(auth)
             .then(result => {

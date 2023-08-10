@@ -12,7 +12,6 @@ import {
 
 import {
     collection,
-    getDocs,
     addDoc,
     onSnapshot,
     query,
@@ -21,25 +20,11 @@ import {
 
 const ShoppingLists = ({ db, route }) => {
     const { userID } = route.params;
+
     const [lists, setLists] = useState([]);
     const [listName, setListName] = useState("");
     const [item1, setItem1] = useState("");
     const [item2, setItem2] = useState("");
-
-    const fetchShoppingLists = async () => {};
-
-    const addShoppingList = async newList => {
-        const newListRef = await addDoc(
-            collection(db, "shoppinglists"),
-            newList
-        );
-        if (newListRef.id) {
-            setLists([newList, ...lists]);
-            Alert.alert(`The list "${listName}" has been added.`);
-        } else {
-            Alert.alert("Unable to add. Please try later");
-        }
-    };
 
     useEffect(() => {
         const q = query(
@@ -60,18 +45,31 @@ const ShoppingLists = ({ db, route }) => {
         };
     }, []);
 
+    const addShoppingList = async (newList) => {
+        const newListRef = await addDoc(
+            collection(db, "shoppinglists"),
+            newList
+        );
+        if (newListRef.id) {
+            setLists([newList, ...lists]);
+            Alert.alert(`The list "${listName}" has been added.`);
+        } else {
+            Alert.alert("Unable to add. Please try later");
+        }
+    };
+
     return (
         <View style={styles.container}>
             <FlatList
                 style={styles.listsContainer}
                 data={lists}
-                renderItem={({ item }) => (
+                renderItem={({ item }) => 
                     <View style={styles.listItem}>
                         <Text>
                             {item.name}: {item.items.join(", ")}
                         </Text>
                     </View>
-                )}
+                }
             />
             <View style={styles.listForm}>
                 <TextInput
