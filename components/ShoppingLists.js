@@ -5,7 +5,7 @@ import {
     TouchableOpacity, Alert
   } from 'react-native';
 
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, onSnapshot } from "firebase/firestore";
 
 const ShoppingLists = ({ db }) => {
     const [lists, setLists] = useState([]);
@@ -14,12 +14,7 @@ const ShoppingLists = ({ db }) => {
     const [item2, setItem2] = useState("");
 
     const fetchShoppingLists = async () => {
-        const listsDocuments = await getDocs(collection(db, "shoppinglists"));
-        let newLists = [];
-        listsDocuments.forEach(docObject => {
-            newLists.push({ id: docObject.id, ...docObject.data() });
-        });
-        setLists(newLists);
+        
     };
 
     const addShoppingList = async (newList) => {
@@ -32,9 +27,20 @@ const ShoppingLists = ({ db }) => {
         }
       }
 
-    useEffect(() => {
-        fetchShoppingLists();
-    }, [JSON.stringify(lists)]);
+      useEffect(() => {
+        const unsubShoppinglists = onSnapshot(collection(db, "shoppinglists"), (documentsSnapshot) => {
+          let newLists = [];
+          documentsSnapshot.forEach(doc => {
+            newLists.push({ id: doc.id, ...doc.data() })
+          });
+          setLists(newLists);
+        });
+    
+        // Clean up code
+        return () => {
+          if (unsubShoppinglists) unsubShoppinglists();
+        }
+      }, []);
 
     return (
         <View style={styles.container}>
