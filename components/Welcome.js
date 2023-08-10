@@ -1,10 +1,24 @@
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Welcome = ({ navigation }) => {
+    const auth = getAuth();
+    const signInUser = () => {
+        signInAnonymously(auth)
+            .then(result => {
+                navigation.navigate("ShoppingLists", {
+                    userID: result.user.uid,
+                });
+                Alert.alert("Signed in Successfully!");
+            })
+            .catch(error => {
+                Alert.alert("Unable to sign in, try later again.");
+            });
+    };
     return (
         <View style={styles.container}>
             <Text style={styles.appTitle}>Shopping Lists</Text>
-            <TouchableOpacity style={styles.startButton} onPress={() => {}}>
+            <TouchableOpacity style={styles.startButton} onPress={signInUser}>
                 <Text style={styles.startButtonText}>Get started</Text>
             </TouchableOpacity>
         </View>
