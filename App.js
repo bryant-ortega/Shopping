@@ -15,6 +15,7 @@ import Welcome from "./components/Welcome";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useEffect } from "react";
 import { LogBox, Alert } from "react-native";
+
 LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 
 
@@ -50,7 +51,13 @@ const App = () => {
             <Stack.Navigator initialRouteName="Welcome">
                 <Stack.Screen name="Welcome" component={Welcome} />
                 <Stack.Screen name="ShoppingLists">
-                    {props => <ShoppingLists db={db} {...props} />}
+                    {props => (
+                        <ShoppingLists
+                            isConnected={connectionStatus.isConnected}
+                            db={db}
+                            {...props}
+                        />
+                    )}
                 </Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
