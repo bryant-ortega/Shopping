@@ -18,6 +18,8 @@ import {
     where,
 } from "firebase/firestore";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const ShoppingLists = ({ db, route }) => {
     const { userID } = route.params;
 
@@ -26,24 +28,36 @@ const ShoppingLists = ({ db, route }) => {
     const [item1, setItem1] = useState("");
     const [item2, setItem2] = useState("");
 
-    useEffect(() => {
-        const q = query(
-            collection(db, "shoppinglists"),
-            where("uid", "==", userID)
-        );
-        const unsubShoppinglists = onSnapshot(q, documentsSnapshot => {
-            let newLists = [];
-            documentsSnapshot.forEach(doc => {
-                newLists.push({ id: doc.id, ...doc.data() });
-            });
-            setLists(newLists);
+useEffect(() => {
+    const q = query(
+        collection(db, "shoppinglists"),
+        where("uid", "==", userID)
+    );
+    const unsubShoppinglists = onSnapshot(q, documentsSnapshot => {
+        let newLists = [];
+        documentsSnapshot.forEach(doc => {
+            newLists.push({ id: doc.id, ...doc.data() });
         });
+        cacheShoppingLists(newLists);
+        setLists(newLists);
+    });
 
-        // Clean up code
-        return () => {
-            if (unsubShoppinglists) unsubShoppinglists();
-        };
-    }, []);
+    // Clean up code
+    return () => {
+        if (unsubShoppinglists) unsubShoppinglists();
+    };
+}, []);
+
+const cacheShoppingLists = async listsToCache => {
+    try {
+        await AsyncStorage.setItem(
+            "shopping_lists",
+            JSON.stringify(listsToCache)
+        );
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 
     const addShoppingList = async (newList) => {
         const newListRef = await addDoc(
